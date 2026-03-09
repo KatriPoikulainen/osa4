@@ -22,3 +22,11 @@ test('all blogs are returned', async () => {
 after(async () => {
   await mongoose.connection.close()
 })
+test('blog posts have id field instead of _id', async () => {
+  const response = await api.get('/api/blogs')
+
+  const blog = response.body[0]
+
+  assert.strictEqual(blog.id !== undefined, true)
+  assert.strictEqual(blog._id === undefined, true)
+})
