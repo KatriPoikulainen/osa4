@@ -19,9 +19,6 @@ test('all blogs are returned', async () => {
   assert.strictEqual(response.body.length, 2)
 })
 
-after(async () => {
-  await mongoose.connection.close()
-})
 test('blog posts have id field instead of _id', async () => {
   const response = await api.get('/api/blogs')
 
@@ -29,4 +26,32 @@ test('blog posts have id field instead of _id', async () => {
 
   assert.strictEqual(blog.id !== undefined, true)
   assert.strictEqual(blog._id === undefined, true)
+})
+
+test('a valid blog can be added', async () => {
+  const newBlog = {
+    title: 'Async testing in Node',
+    author: 'Katri',
+    url: 'https://example.com/async',
+    likes: 12
+  }
+
+  const blogsAtStart = await api.get('/api/blogs')
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const blogsAtEnd = await api.get('/api/blogs')
+
+  assert.strictEqual(blogsAtEnd.body.length, blogsAtStart.body.length + 1)
+
+  const titles = blogsAtEnd.body.map(blog => blog.title)
+  assert(titles.includes('Async testing in Node'))
+})
+
+after(async () => {
+  await mongoose.connection.close()
 })
