@@ -1,10 +1,35 @@
-const { test, after } = require('node:test')
+const { test, after, beforeEach } = require('node:test')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const assert = require('node:assert')
 const app = require('../app')
+const Blog = require('../models/blog')
 
 const api = supertest(app)
+
+const initialBlogs = [
+  {
+    title: 'First test blog',
+    author: 'Katri',
+    url: 'https://example.com/1',
+    likes: 5
+  },
+  {
+    title: 'Second test blog',
+    author: 'Someone',
+    url: 'https://example.com/2',
+    likes: 10
+  }
+]
+
+beforeEach(async () => {
+  await Blog.deleteMany({})
+
+  for (const blog of initialBlogs) {
+    const blogObject = new Blog(blog)
+    await blogObject.save()
+  }
+})
 
 test('blogs are returned as json', async () => {
   await api
@@ -13,11 +38,11 @@ test('blogs are returned as json', async () => {
     .expect('Content-Type', /application\/json/)
 })
 
-//test('all blogs are returned', async () => {
-  //const response = await api.get('/api/blogs')
+test('all blogs are returned', async () => {
+  const response = await api.get('/api/blogs')
 
-  //assert.strictEqual(response.body.length, 2)
-//})
+  assert.strictEqual(response.body.length, initialBlogs.length)
+})
 
 test('blog posts have id field instead of _id', async () => {
   const response = await api.get('/api/blogs')
@@ -51,6 +76,7 @@ test('a valid blog can be added', async () => {
   const titles = blogsAtEnd.body.map(blog => blog.title)
   assert(titles.includes('Async testing in Node'))
 })
+
 test('if likes is missing, it will default to 0', async () => {
   const newBlog = {
     title: 'Blog without likes',
@@ -65,6 +91,32 @@ test('if likes is missing, it will default to 0', async () => {
     .expect('Content-Type', /application\/json/)
 
   assert.strictEqual(response.body.likes, 0)
+})
+
+test('blog without title is not added', async () => {
+  const newBlog = {
+    author: 'Katri',
+    url: 'https://example.com/notitle',
+    likes: 5
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
+test('blog without url is not added', async () => {
+  const newBlog = {
+    title: 'Blog without url',
+    author: 'Katri',
+    likes: 5
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
 })
 
 after(async () => {
