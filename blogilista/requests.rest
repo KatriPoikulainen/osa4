@@ -23,3 +23,18 @@ Content-Type: application/json
 ###
 
 GET http://localhost:3003/api/blogs
+
+###
+
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "katri",
+  "name": "Katri Virtanen",
+  "password": "salasana123"
+}
+
+###
+
+GET http://localhost:3003/api/users
