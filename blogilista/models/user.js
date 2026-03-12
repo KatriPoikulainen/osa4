@@ -10,6 +10,10 @@ const userSchema = mongoose.Schema({
 
   name: String,
   passwordHash: String,
+  blogs: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Blog'
+  }]
 
 })
 

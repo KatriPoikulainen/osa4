@@ -43,3 +43,30 @@ Content-Type: application/json
 ###
 
 GET http://localhost:3003/api/users
+
+###
+
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "aku",
+  "name": "Aku Ankka",
+  "password": "salasana123"
+}
+
+###
+
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "Populate test blog",
+  "author": "Aku",
+  "url": "https://example.com/populate",
+  "likes": 4
+}
+
+###
+
+GET http://localhost:3003/api/blogs
