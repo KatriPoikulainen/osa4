@@ -1,38 +1,206 @@
-POST http://localhost:3003/api/login
+################################################
+# 1. LUO KÄYTTÄJÄ
+################################################
+
+POST http://localhost:3003/api/users
 Content-Type: application/json
 
 {
-  "username": "katri123",
+  "username": "iines123",
+  "name": "Iines Ankka",
   "password": "salasana123"
 }
 
 ###
+# ODOTETTU TULOS
+# Status: 201 Created
+# Palauttaa käyttäjän ilman passwordHashia
+#
+# {
+#   "username": "iines123",
+#   "name": "Iines Ankka",
+#   "id": "..."
+# }
+
+################################################
+# 2. KATSO KÄYTTÄJÄT
+################################################
+
+GET http://localhost:3003/api/users
+
+###
+# ODOTETTU TULOS
+# Status: 200
+# lista käyttäjistä
+
+################################################
+# 3. KIRJAUDU SISÄÄN
+################################################
+
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+  "username": "iines123",
+  "password": "salasana123"
+}
+
+###
+# ODOTETTU TULOS
+# Status: 200
+#
+# {
+#   "token": "TÄMÄ_TOKEN",
+#   "username": "iines123",
+#   "name": "Iines Ankka"
+# }
+#
+# KOPIOI TOKEN SEURAAVIIN PYYNTÖIHIN
+
+################################################
+# 4. LISÄÄ BLOGI TOKENILLA
+################################################
 
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImthdHJpMTIzIiwiaWQiOiI2OWIwNjE5YTJjZWNhYWRmZDkxMjMzZjIiLCJpYXQiOjE3NzMzMzg3MTR9.hpyNP9zb7FcS2IwePxrAsHafAIUXQWweKdamm-e6ZJo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImlpbmVzMTIzIiwiaWQiOiI2OWIzNDkyYzNhOWJhZDM3Nzk4ZGMxZGMiLCJpYXQiOjE3NzMzNTc0MTR9.hWE1aqeCCrg5IRuo9X1Npk9C10AP1UhS9AVhLbByzqA
 
 {
   "title": "Token protected blog",
-  "author": "Katri",
+  "author": "Iines",
   "url": "https://example.com/token",
   "likes": 7
 }
 
 ###
+# ODOTETTU TULOS
+# Status: 201 Created
+#
+# Blogi palautuu ja siinä näkyy user
+
+################################################
+# 5. LISÄÄ BLOGI ILMAN TOKENIA
+################################################
 
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
   "title": "No token blog",
-  "author": "Katri",
+  "author": "Iines",
   "url": "https://example.com/notoken",
   "likes": 1
 }
 
 ###
+# ODOTETTU TULOS
+# Status: 401 Unauthorized
+
+################################################
+# 6. HAE KAIKKI BLOGIT
+################################################
 
 GET http://localhost:3003/api/blogs
 
 ###
+# ODOTETTU TULOS
+# Status: 200
+#
+# [
+#   {
+#     "title": "Token protected blog",
+#     "author": "Iines",
+#     "url": "https://example.com/token",
+#     "likes": 7,
+#     "id": "BLOG_ID",
+#     "user": {
+#        "username": "iines123",
+#        "name": "Iines Ankka"
+#     }
+#   }
+# ]
+#
+# KOPIOI BLOGIN id SEURAAVIIN TESTEIHIN
+
+################################################
+# 7. PÄIVITÄ BLOGIN TYKKÄYKSET
+################################################
+
+PUT http://localhost:3003/api/blogs/69b349953a9bad37798dc1e2
+Content-Type: application/json
+
+{
+  "title": "Token protected blog",
+  "author": "Iines",
+  "url": "https://example.com/token",
+  "likes": 20
+}
+
+###
+# ODOTETTU TULOS
+# Status: 200
+# likes muuttuu 20
+
+################################################
+# 8. POISTA BLOGI OIKEALLA TOKENILLA
+################################################
+
+DELETE http://localhost:3003/api/blogs/69b349953a9bad37798dc1e2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImlpbmVzMTIzIiwiaWQiOiI2OWIzNDkyYzNhOWJhZDM3Nzk4ZGMxZGMiLCJpYXQiOjE3NzMzNTc0MTR9.hWE1aqeCCrg5IRuo9X1Npk9C10AP1UhS9AVhLbByzqA
+
+###
+# ODOTETTU TULOS
+# Status: 204 No Content
+
+################################################
+# 9. POISTA BLOGI ILMAN TOKENIA
+################################################
+
+DELETE http://localhost:3003/api/blogs/69b349953a9bad37798dc1e2
+
+###
+# ODOTETTU TULOS
+# Status: 401 Unauthorized
+
+################################################
+# 10. LUO TOINEN KÄYTTÄJÄ
+################################################
+
+POST http://localhost:3003/api/users
+Content-Type: application/json
+
+{
+  "username": "aku123",
+  "name": "Aku Ankka",
+  "password": "ankka123"
+}
+
+################################################
+# 11. KIRJAUDU TOISELLA KÄYTTÄJÄLLÄ
+################################################
+
+POST http://localhost:3003/api/login
+Content-Type: application/json
+
+{
+  "username": "aku123",
+  "password": "ankka123"
+}
+
+###
+# KOPIOI TÄMÄ TOKEN
+
+################################################
+# 12. YRITÄ POISTAA TOISEN BLOGI
+################################################
+
+DELETE http://localhost:3003/api/blogs/69b34cc33a9bad37798dc1fe
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFrdTEyMyIsImlkIjoiNjliMzQ1YjkzYTliYWQzNzc5OGRjMWMwIiwiaWF0IjoxNzczMzU3ODA4fQ.jpjvNUQRWxRgtg0jx_trkKI1wSjnzC7CnGIp6UhFyiU
+
+###
+# ODOTETTU TULOS
+# Status: 403 Forbidden
+#
+# {
+#   "error": "only the user who added the blog can delete it"
+# }
