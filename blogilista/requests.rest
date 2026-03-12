@@ -1,58 +1,22 @@
-POST http://localhost:3003/api/users
+POST http://localhost:3003/api/login
 Content-Type: application/json
 
 {
   "username": "katri123",
-  "name": "Katri Virtanen",
   "password": "salasana123"
 }
 
 ###
 
-POST http://localhost:3003/api/users
+POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImthdHJpMTIzIiwiaWQiOiI2OWIwNjE5YTJjZWNhYWRmZDkxMjMzZjIiLCJpYXQiOjE3NzMzMzg3MTR9.hpyNP9zb7FcS2IwePxrAsHafAIUXQWweKdamm-e6ZJo
 
 {
-  "username": "ab",
-  "name": "Too Short Username",
-  "password": "salasana123"
-}
-
-###
-
-POST http://localhost:3003/api/users
-Content-Type: application/json
-
-{
-  "username": "validuser",
-  "name": "Too Short Password",
-  "password": "ab"
-}
-
-###
-
-POST http://localhost:3003/api/users
-Content-Type: application/json
-
-{
-  "username": "katri",
-  "name": "Duplicate Username",
-  "password": "salasana123"
-}
-
-###
-
-GET http://localhost:3003/api/users
-
-###
-
-POST http://localhost:3003/api/users
-Content-Type: application/json
-
-{
-  "username": "aku",
-  "name": "Aku Ankka",
-  "password": "salasana123"
+  "title": "Token protected blog",
+  "author": "Katri",
+  "url": "https://example.com/token",
+  "likes": 7
 }
 
 ###
@@ -61,52 +25,12 @@ POST http://localhost:3003/api/blogs
 Content-Type: application/json
 
 {
-  "title": "Populate test blog",
-  "author": "Aku",
-  "url": "https://example.com/populate",
-  "likes": 4
+  "title": "No token blog",
+  "author": "Katri",
+  "url": "https://example.com/notoken",
+  "likes": 1
 }
 
 ###
 
 GET http://localhost:3003/api/blogs
-
-###
-
-POST http://localhost:3003/api/login
-Content-Type: application/json
-
-{
-  "username": "katri",
-  "password": "salasana123"
-}
-
-###
-
-POST http://localhost:3003/api/login
-Content-Type: application/json
-
-{
-  "username": "katri",
-  "password": "salasana123"
-}
-
-###
-
-POST http://localhost:3003/api/login
-Content-Type: application/json
-
-{
-  "username": "katri",
-  "password": "vääräsalasana"
-}
-
-###
-
-POST http://localhost:3003/api/login
-Content-Type: application/json
-
-{
-  "username": "eioleolemassa",
-  "password": "salasana123"
-}
